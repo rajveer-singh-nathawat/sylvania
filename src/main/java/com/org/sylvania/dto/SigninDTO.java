@@ -1,4 +1,4 @@
-package com.org.sylvania.DTO;
+package com.org.sylvania.dto;
 
 import lombok.Data;
 

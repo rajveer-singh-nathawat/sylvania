@@ -1,59 +1,37 @@
 package com.org.sylvania.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.org.sylvania.DTO.SigninDTO;
-import com.org.sylvania.DTO.UserDetailRequestDTO;
-import com.org.sylvania.entity.UserAuthorityEntity;
-import com.org.sylvania.entity.UserDataEntity;
-import com.org.sylvania.repository.UserDataRepository;
+import com.org.sylvania.dto.AuthenticationResponse;
+import com.org.sylvania.dto.SigninDTO;
+import com.org.sylvania.exception.IncorrectCredentialException;
+import com.org.sylvania.util.JwtUtil;
 
 @Service
 public class LoginService {
-	@Autowired
-	private UserDataRepository userDataRepository;
 
-	public String signin(SigninDTO signinDto) {
-		Optional<UserDataEntity> dataEntity=	userDataRepository.findByUserNameOrEmailAndPassword(signinDto.getUserNameOrEmail(),signinDto.getUserNameOrEmail(), signinDto.getPassword());
- 
-		if(dataEntity.isPresent()) {
-			return dataEntity.get().getFullName();
-		}
-		return "login failed";
-	}
+  @Autowired
+  private AuthenticationManager authenticationManager;
+  @Autowired
+  private UserDetailService userDetailService;
+  @Autowired
+  private JwtUtil jwtUtil;
 
-	public HttpStatus signup(UserDetailRequestDTO userDetailJson) {
-		saveSignupInfo(userDetailJson);
-		saveUserAuthorityInfo(userDetailJson);
-			
-			return HttpStatus.CREATED;
-		
-	}
-
-	private void saveUserAuthorityInfo(UserDetailRequestDTO userDetailJson) {
-		UserAuthorityEntity authorityEntity =new UserAuthorityEntity();
-		
-		authorityEntity.setUserName(userDetailJson.getUserName());
-		authorityEntity.setEmail(userDetailJson.getEmail());
-		authorityEntity.setPassword(userDetailJson.getPassword());		
-	}
-
-	private void saveSignupInfo(UserDetailRequestDTO userDetailJson) {
-		UserDataEntity signupUser = new UserDataEntity();
-		
-		signupUser.setFullName(userDetailJson.getFullName());
-		signupUser.setAddress(userDetailJson.getAddress());
-		signupUser.setDateOfBirth(userDetailJson.getDateOfBirth());
-		signupUser.setDesignation(userDetailJson.getDesignation());
-		signupUser.setJobLocation(userDetailJson.getJobLocation());
-		signupUser.setJobStatus(userDetailJson.getJobStatus());
-		signupUser.setLivingStatus(userDetailJson.getLivingStatus());
-		signupUser.setPhoneNo(userDetailJson.getPhoneNo());
-		signupUser.setQualification(userDetailJson.getQualification());		
-	}
+  public ResponseEntity<?> authenticateToken(SigninDTO signinDto) throws IncorrectCredentialException {
+try {
+  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinDto.getUserNameOrEmail(), signinDto.getPassword()));
+} catch (BadCredentialsException e) {
+  throw new IncorrectCredentialException(e.getMessage());
+}
+final UserDetails userDetails = userDetailService.loadUserByUsername(signinDto.getUserNameOrEmail());
+String jwt = jwtUtil.generateToken(userDetails);
+    return ResponseEntity.ok(new AuthenticationResponse(jwt));
+  }
 
 }

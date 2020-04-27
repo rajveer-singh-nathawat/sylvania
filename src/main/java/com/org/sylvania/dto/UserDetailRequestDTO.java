@@ -1,11 +1,11 @@
-package com.org.sylvania.DTO;
+package com.org.sylvania.dto;
 
 import java.util.Date;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import com.org.sylvania.validator.ConfirmPasswordValid;
 import com.org.sylvania.validator.UniqueEmailValid;
 import com.org.sylvania.validator.UniquePhoneNo;
 import com.org.sylvania.validator.UniqueUserName;
@@ -13,30 +13,38 @@ import com.org.sylvania.validator.UniqueUserName;
 import lombok.Data;
 
 @Data
-@ConfirmPasswordValid
+
 public class UserDetailRequestDTO {
-	private Boolean status;
-	@Pattern(regexp = "^[a-z0-9_-]{3,15}$")
+//	private Boolean status;
+	@NotNull(message = "User name can not be null.")
+	@Pattern(regexp = "^[A-Za-z]{4,8}[0-9]{2}$")
 	@UniqueUserName
 	private String userName;
 	@Email
 	@UniqueEmailValid
+	@NotNull(message = "Email can not be null.")
 	private String email;
+	@NotNull(message = "Password cannot be null.")
 	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
 	private String password;
-	@Pattern(regexp = "^[A-Za-z\\.]${*25}")
+	@NotNull(message = "Full name can not be null.")
+	@Pattern(regexp = "^[A-Za-z\\s]{0,25}$")
 	private String fullName;
-	@Pattern(regexp = "\n" + "\\+(9[976]\\d|8[987530]\\d|6[987]\\d|5[90]\\d|42\\d|3[875]\\d|\n"
-			+ "2[98654321]\\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|\n"
-			+ "4[987654310]|3[9643210]|2[70]|7|1)\\d{1,14}$")
+	@NotNull(message = "Phone no can not be null.")
+	@Pattern(regexp = "^[0-9]*$")
 	@UniquePhoneNo
 	private String phoneNo;
-	@Pattern(regexp = "^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$")
 	private Date dateOfBirth;
+	@NotNull(message = "qualification can not be null.")
 	private String qualification;
+	@NotNull(message = "address can not be null.")
 	private String address;
 	private String livingStatus;
 	private String jobStatus;
+	@NotNull(message = "Company Name can not be null.")
+	private String companyName;
+	@NotNull(message = "designation can not be null.")
 	private String designation;
+	@NotNull(message = "jobLocation can not be null.")
 	private String jobLocation;
 }

@@ -1,18 +1,11 @@
 package com.org.sylvania.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
 
-@Service
-public class UserListService {
+public interface UserListService {
 
-	public void getAlumnusList() {
-		// TODO Auto-generated method stub
-		
-	}
+  
 
-	public void getSylvaniansList() {
-		// TODO Auto-generated method stub
-		
-	}
+  ResponseEntity<?> getUserList(String livingStatus);
 
 }

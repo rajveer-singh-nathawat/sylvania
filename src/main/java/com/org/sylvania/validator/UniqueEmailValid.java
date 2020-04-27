@@ -13,7 +13,7 @@ import javax.validation.Payload;
 @Constraint(validatedBy = UniqueEmailValidator.class)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniqueEmailValid {
-	String method() default "Allready exist.";
+	String message() default "Email allready exist.";
 	Class<?>[] groups() default {};
 	Class<? extends Payload>[] payload() default {};
 

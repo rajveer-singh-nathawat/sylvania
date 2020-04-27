@@ -1,12 +1,16 @@
 package com.org.sylvania.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -14,16 +18,27 @@ import lombok.Data;
 @Entity
 @Table(name="User_Data")
 @Data
-public class UserDataEntity {
-	@Id
+public class UserDataEntity implements Serializable{
+	/**
+   * 
+   */
+  private static final long serialVersionUID = 2131717738655145292L;
+
+
+  @Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	@Column(name = "user_data_id")
+	private Long userDataId;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "user_id", name = "user_id")
+    private UserEntity userEntity;
 	
 	@Column(name="status")
-	private Boolean status = true;
+	private Boolean status ;
 	
 	@Column(name="accept_status")
-	private Integer acceptStatus=-1;
+	private Integer acceptStatus;
 	
 	@Column(name="full_name")
 	private String fullName;
@@ -45,6 +60,9 @@ public class UserDataEntity {
 	
 	@Column(name="job_status")
 	private String jobStatus;
+	
+	@Column(name = "company_name")
+	private String companyName;
 	
 	@Column(name="designation")
 	private String designation;
